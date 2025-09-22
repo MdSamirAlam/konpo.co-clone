@@ -4,13 +4,10 @@ import { SplitText } from "gsap/SplitText";
 
 gsap.registerPlugin(Flip, SplitText);
 
-// Function to disable scrolling
 const disableScroll = () => {
-  // Store current scroll position
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-  // Add CSS to prevent scrolling
   document.body.style.overflow = "hidden";
   document.body.style.position = "fixed";
   document.body.style.top = `-${scrollTop}px`;
@@ -18,7 +15,6 @@ const disableScroll = () => {
   document.body.style.width = "100%";
   document.body.style.height = "100%";
 
-  // Prevent scroll events
   window.addEventListener("wheel", preventDefault, { passive: false });
   window.addEventListener("touchmove", preventDefault, { passive: false });
   window.addEventListener("keydown", preventDefaultForScrollKeys, {
@@ -26,13 +22,10 @@ const disableScroll = () => {
   });
 };
 
-// Function to enable scrolling
 const enableScroll = () => {
-  // Get the stored scroll position
   const scrollTop = parseInt(document.body.style.top || "0") * -1;
   const scrollLeft = parseInt(document.body.style.left || "0") * -1;
 
-  // Remove CSS that prevents scrolling
   document.body.style.overflow = "";
   document.body.style.position = "";
   document.body.style.top = "";
@@ -40,24 +33,19 @@ const enableScroll = () => {
   document.body.style.width = "";
   document.body.style.height = "";
 
-  // Restore scroll position
   window.scrollTo(scrollLeft, scrollTop);
 
-  // Remove scroll event listeners
   window.removeEventListener("wheel", preventDefault);
   window.removeEventListener("touchmove", preventDefault);
   window.removeEventListener("keydown", preventDefaultForScrollKeys);
 };
 
-// Prevent default function for events
 const preventDefault = (e) => {
   e.preventDefault();
 };
 
-// Keys that can cause scrolling
 const keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
 
-// Prevent default for specific keys
 const preventDefaultForScrollKeys = (e) => {
   if (keys[e.keyCode]) {
     preventDefault(e);
@@ -85,7 +73,6 @@ const setupTextSplit = () => {
 };
 
 const createCounterDigits = () => {
-  // Counter 1: Create digits normally without special offset
   const counter1 = document.querySelector(".counter-1");
   const num0 = document.createElement("div");
   num0.className = "num";
@@ -93,11 +80,10 @@ const createCounterDigits = () => {
   counter1.appendChild(num0);
 
   const num1 = document.createElement("div");
-  num1.className = "num"; // Remove numoffset1 class
+  num1.className = "num";
   num1.textContent = "1";
   counter1.appendChild(num1);
 
-  // Counter 2: Create digits 0-9 with conditional offset class
   const counter2 = document.querySelector(".counter-2");
   for (let i = 0; i < 10; i++) {
     const numDiv = document.createElement("div");
@@ -105,13 +91,11 @@ const createCounterDigits = () => {
     numDiv.textContent = i;
     counter2.appendChild(numDiv);
   }
-  // Add final 0 for the "100"
   const finalTens = document.createElement("div");
   finalTens.className = "num";
   finalTens.textContent = "0";
   counter2.appendChild(finalTens);
 
-  // Counter 3: Create digits 0-9 (ones place)
   const counter3 = document.querySelector(".counter-3");
   for (let i = 0; i < 10; i++) {
     const numDiv = document.createElement("div");
@@ -120,7 +104,6 @@ const createCounterDigits = () => {
     counter3.appendChild(numDiv);
   }
 
-  // Final counter: Create final digit with "0" for "100"
   const finalNum = document.createElement("div");
   finalNum.className = "num";
   finalNum.textContent = "0";
@@ -175,25 +158,20 @@ function animateImages() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Disable scrolling immediately
   disableScroll();
 
-  // ✅ Wait for fonts to be ready
   if ("fonts" in document && document.fonts?.ready) {
     try {
-      await document.fonts.ready; // resolves when all in-use fonts are loaded
+      await document.fonts.ready;
     } catch (_) {}
   } else {
-    // Fallback for older browsers
     await new Promise((r) =>
       window.addEventListener("load", r, { once: true })
     );
   }
 
-  // Now it’s safe to split text
   setupTextSplit();
 
-  // The rest of your init exactly as before
   createCounterDigits();
 
   animateCounter(document.querySelector(".counter-3"), 2.5);
@@ -260,8 +238,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       ease: "power4.out",
       onComplete: () => {
         enableScroll();
-
-        // notify other modules that loader is finished and DOM is stable
         document.dispatchEvent(
           new CustomEvent("loader:finished", { detail: { time: Date.now() } })
         );

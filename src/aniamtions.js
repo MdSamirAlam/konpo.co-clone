@@ -3,25 +3,22 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import SplitType from "split-type";
 
 document.querySelectorAll(".hover-line").forEach((el) => {
-  // Ensure the link is a proper positioning context
   el.style.position = "relative";
-  el.style.display = "inline-block"; // important
+  el.style.display = "inline-block";
 
-  // Create underline
   const underline = document.createElement("span");
   underline.style.position = "absolute";
   underline.style.left = 0;
   underline.style.bottom = 0;
   underline.style.height = "1px";
   underline.style.backgroundColor = "currentColor";
-  underline.style.width = "100%"; // <-- set full width
+  underline.style.width = "100%";
   underline.style.pointerEvents = "none";
   underline.style.transformOrigin = "left center";
-  underline.style.transform = "scaleX(0)"; // animate scale instead of width
-  underline.style.willChange = "transform"; // smoother
+  underline.style.transform = "scaleX(0)";
+  underline.style.willChange = "transform";
   el.appendChild(underline);
 
-  // Hover in: grow left → right
   el.addEventListener("mouseenter", () => {
     gsap.to(underline, {
       scaleX: 1,
@@ -31,7 +28,6 @@ document.querySelectorAll(".hover-line").forEach((el) => {
     });
   });
 
-  // Hover out: shrink left → right (disappear towards the right)
   el.addEventListener("mouseleave", () => {
     gsap.to(underline, {
       scaleX: 0,
@@ -54,7 +50,6 @@ function splitAndAnimateText(selector) {
     el.style.display = "block";
     el.style.whiteSpace = "normal";
 
-    // Get clean text (strip line breaks/tabs)
     const text = el.textContent.replace(/\s+/g, " ").trim();
     el.textContent = "";
 
@@ -87,7 +82,6 @@ function splitAndAnimateText(selector) {
         trigger: el,
         start: "top 82%",
         toggleActions: "play none none none",
-        // markers: true,
       },
     });
   });
@@ -95,11 +89,9 @@ function splitAndAnimateText(selector) {
 
 splitAndAnimateText(".split-text");
 
-// Select all headings
 const headings = document.querySelectorAll(".hover-heading");
 
 headings.forEach((heading) => {
-  // Split text of each heading separately
   const line1 = new SplitType(heading.querySelector(".line1"), {
     types: "chars",
   });
@@ -107,10 +99,8 @@ headings.forEach((heading) => {
     types: "chars",
   });
 
-  // Initial state
   gsap.set(line2.chars, { y: "100%", opacity: 0 });
 
-  // Mouse enter
   heading.addEventListener("mouseenter", () => {
     gsap.to(line1.chars, {
       y: "-100%",
@@ -127,7 +117,6 @@ headings.forEach((heading) => {
     });
   });
 
-  // Mouse leave
   heading.addEventListener("mouseleave", () => {
     gsap.to(line1.chars, {
       y: "0%",
@@ -149,12 +138,10 @@ function yImageScale() {
   const images = document.querySelectorAll(".service-img");
 
   images.forEach((image) => {
-    // Start fully hidden from bottom
     gsap.set(image, { clipPath: "inset(0 0 100% 0)" });
 
-    // Animate upwards (top to bottom reveal)
     gsap.to(image, {
-      clipPath: "inset(0 0 0% 0)", // fully visible
+      clipPath: "inset(0 0 0% 0)",
       duration: 0.8,
       ease: "expo.inOut",
       scrollTrigger: {
@@ -181,7 +168,7 @@ document.querySelectorAll(".tagline span").forEach((elm) => {
 const magneticElements = document.querySelectorAll(".magnetic-hover");
 
 magneticElements.forEach((magnetElm) => {
-  const magneticDiv = magnetElm.querySelector("div"); // Get the div inside this specific element
+  const magneticDiv = magnetElm.querySelector("div");
 
   magnetElm.addEventListener("mousemove", (e) => {
     const rect = magnetElm.getBoundingClientRect();
@@ -213,12 +200,10 @@ function dottedBgMouseFollower() {
     const textContainer = dottedBg.querySelector(".text-of-dotted-bg");
     if (!textContainer) return;
 
-    // Store initial CSS offset
     const initialX = textContainer.offsetLeft;
     const initialY = textContainer.offsetTop;
 
-    // Define how far the text can move from its initial position
-    const maxOffset = 200; // px (adjust as needed)
+    const maxOffset = 200;
 
     dottedBg.addEventListener("mousemove", (e) => {
       const rect = dottedBg.getBoundingClientRect();
@@ -226,7 +211,6 @@ function dottedBgMouseFollower() {
 
       let x = e.clientX - rect.left - textRect.width / 2;
 
-      // Clamp movement so it stays within [-maxOffset, +maxOffset]
       const relativeX = Math.max(-maxOffset, Math.min(maxOffset, x - initialX));
 
       gsap.to(textContainer, {
@@ -250,9 +234,6 @@ function dottedBgMouseFollower() {
 }
 dottedBgMouseFollower();
 
-// -------------------------
-// Para Hover (updated)
-// -------------------------
 let paraHoverInitialized = false;
 
 function paraScaleWhileHover() {
@@ -265,7 +246,6 @@ function paraScaleWhileHover() {
   const paragraphs = container.querySelectorAll(".para");
   if (!paragraphs.length) return;
 
-  // Normalize whitespace and wrap letters (guard to avoid double-wrapping)
   paragraphs.forEach((p) => {
     if (p.dataset.paraSplit === "1") return;
     p.dataset.paraSplit = "1";
@@ -285,15 +265,13 @@ function paraScaleWhileHover() {
   const letters = Array.from(container.querySelectorAll(".letter"));
   if (!letters.length) return;
 
-  // Settings
-  const maxScale = 1.45; // adjust to taste
+  const maxScale = 1.45;
   const minScale = 1.0;
-  const radius = 40; // px influence radius
+  const radius = 40;
   let mouse = { x: -9999, y: -9999 };
   let running = false;
   let mouseInside = false;
 
-  // rAF loop — only updates transform (scale)
   function tick() {
     running = true;
 
@@ -308,9 +286,8 @@ function paraScaleWhileHover() {
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       if (dist < radius && mouseInside) {
-        const intensity = 1 - dist / radius; // 0..1
+        const intensity = 1 - dist / radius;
         const scale = minScale + intensity * (maxScale - minScale);
-        // use 3D transform to force GPU/compositor rendering — reduces blurriness
         letter.style.transform = `translateZ(0) scale3d(${scale}, ${scale}, 1)`;
       } else {
         letter.style.transform = "scale(1)";
@@ -324,7 +301,6 @@ function paraScaleWhileHover() {
     }
   }
 
-  // Update mouse coords and start rAF if needed
   container.addEventListener("mousemove", (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
@@ -334,11 +310,9 @@ function paraScaleWhileHover() {
     }
   });
 
-  // Smooth reset on leave using GSAP — only animates scale (no color)
   container.addEventListener("mouseleave", () => {
     mouseInside = false;
 
-    // animate back to scale 1 — no color or shadow changes
     gsap.to(letters, {
       scale: 1,
       duration: 0.45,
@@ -347,31 +321,24 @@ function paraScaleWhileHover() {
         each: 0.004,
         from: "center",
       },
-      // GSAP will apply the scale via transform; ensure no leftover inline transform conflicts
       onComplete: () => {
-        letters.forEach((l) => (l.style.transform = "")); // optional cleanup
+        letters.forEach((l) => (l.style.transform = ""));
       },
     });
   });
 }
 
-// Initialize only after loader signals it's done (keeps modules decoupled)
 document.addEventListener("loader:finished", () => {
-  // microtask to ensure any final DOM writes are flushed
   setTimeout(() => {
     paraScaleWhileHover();
   }, 0);
 });
 
-// Fallback: in case loader never fires the event, init on window load (after fonts/images)
 window.addEventListener("load", () => {
-  // small delay so loader might still finish if it's running late
   setTimeout(() => {
     paraScaleWhileHover();
   }, 150);
 });
-
-// Note: removed the immediate paraScaleWhileHover() call to avoid timing conflicts
 
 function workImageScale() {
   const images = document.querySelectorAll(".work-image");
